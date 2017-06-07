@@ -50,27 +50,23 @@ import javax.xml.parsers.ParserConfigurationException;
 @Extension(
         name = "xml",
         namespace = "sinkMapper",
-        description = "Event to XML output mapper. Transports which publish XML messages can utilize this extension"
-                + "to convert the Siddhi event to XML message. Users can either send a pre-defined XML "
-                + "format or a custom XML message.",
+        description = "This mapper converts Siddhi output events to XML before they are published via transports " +
+                "that publish in XML format. Users can either send a pre-defined XML format or a custom XML message.",
         parameters = {
                 @Parameter(name = "validate.xml",
-                           description = "This property will enable XML validation for generated XML message. By "
-                                   + "default value of the property will be false. When enabled DAS will validate the "
-                                   + "generated XML message and drop the message if it does not adhere to proper XML "
-                                   + "standards. ",
-                           type = {DataType.BOOL}),
+                        description = "This parameter specifies whether the XML messages generated should be " +
+                                "validated or not. If this parameter is set to true, messages that do not adhere " +
+                                "to proper XML standards are dropped. ",
+                        type = {DataType.BOOL}),
                 @Parameter(name = "enclosing.element",
-                           description =
-                                   "Used to specify the enclosing element in case of sending multiple events in same "
-                                           + "XML message. WSO2 DAS will treat the child element of given enclosing "
-                                           + "element as events"
-                                           + " and execute xpath expressions on child elements. If enclosing.element "
-                                           + "is not provided "
-                                           + "multiple event scenario is disregarded and xpaths will be evaluated "
-                                           + "with respect to "
-                                           + "root element.",
-                           type = {DataType.STRING})
+                        description =
+                                "When an enclosing element is specified, the child elements (e.g., the immediate " +
+                                        "child elements) of that element are considered as events. This is useful " +
+                                        "when you need to send multiple events in a single XML message. When an " +
+                                        "enclosing element is not specified, the complete XML message is " +
+                                        "considered as a single event, and the XPaths are evaluated with respect " +
+                                        "to the root element.",
+                        type = {DataType.STRING})
         },
         examples = {
                 @Example(
@@ -126,7 +122,8 @@ public class XMLSinkMapper extends SinkMapper {
 
     /**
      * Initialize the mapper and the mapping configurations.
-     *  @param streamDefinition       The stream definition
+     *
+     * @param streamDefinition       The stream definition
      * @param optionHolder           Option holder containing static and dynamic options
      * @param payloadTemplateBuilder Unmapped payload for reference
      * @param mapperConfigReader
@@ -172,11 +169,11 @@ public class XMLSinkMapper extends SinkMapper {
                     builder.parse(new ByteArrayInputStream(sb.toString().getBytes(Charset.forName("UTF-8"))));
                 } catch (SAXException e) {
                     log.error("Parse error occurred when validating output XML event. " +
-                                      "Reason: " + e.getMessage() + "Dropping event: " + sb.toString());
+                            "Reason: " + e.getMessage() + "Dropping event: " + sb.toString());
                     return;
                 } catch (IOException e) {
                     log.error("IO error occurred when validating output XML event. " +
-                                      "Reason: " + e.getMessage() + "Dropping event: " + sb.toString());
+                            "Reason: " + e.getMessage() + "Dropping event: " + sb.toString());
                     return;
                 } finally {
                     builder.reset();
@@ -198,10 +195,10 @@ public class XMLSinkMapper extends SinkMapper {
     /**
      * Map and publish the given {@link Event} array
      *
-     * @param events                  Event object array
-     * @param optionHolder            option holder containing static and dynamic options
-     * @param payloadTemplateBuilder  Unmapped payload for reference
-     * @param sinkListener output transport callback
+     * @param events                 Event object array
+     * @param optionHolder           option holder containing static and dynamic options
+     * @param payloadTemplateBuilder Unmapped payload for reference
+     * @param sinkListener           output transport callback
      */
     @Override
     public void mapAndSend(Event[] events, OptionHolder optionHolder, TemplateBuilder payloadTemplateBuilder,
@@ -224,7 +221,7 @@ public class XMLSinkMapper extends SinkMapper {
                     builder.parse(new ByteArrayInputStream(sb.toString().getBytes(Charset.forName("UTF-8"))));
                 } catch (SAXException | IOException e) {
                     log.error("Error occurred when validating output XML event. " +
-                                      "Reason: " + e.getMessage() + "Dropping event: " + sb.toString());
+                            "Reason: " + e.getMessage() + "Dropping event: " + sb.toString());
                     return;
                 } finally {
                     builder.reset();
