@@ -2,7 +2,7 @@ siddhi-map-xml
 ======================================
 
 The **siddhi-map-xml extension** is an extension to <a target="_blank" href="https://wso2.github
-.io/siddhi">Siddhi</a> that provides the functionality to convert canonical events of the server in the WSO2Event format to any xml message format and convert events of any xml format to the server's canonical event format (WSO2Event) for processing.
+.io/siddhi">Siddhi</a> that supports mapping incoming XML events to a stream at the source, and mapping a stream to XML events at the sink.
 
 Find some useful links below:
 
