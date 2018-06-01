@@ -63,38 +63,38 @@ import javax.xml.stream.XMLStreamException;
                 + "xpath to map from a custom XML message.",
         parameters = {
                 @Parameter(name = "namespaces",
-                           description =
-                                   "Used to provide namespaces used in the incoming XML message beforehand to "
-                                           + "configure xpath expressions. User can provide a comma separated list. "
-                                           + "If these are not provided xpath evaluations will fail",
-                           type = {DataType.STRING},
-                           optional = true,
-                           defaultValue = "None"),
+                        description =
+                                "Used to provide namespaces used in the incoming XML message beforehand to "
+                                        + "configure xpath expressions. User can provide a comma separated list. "
+                                        + "If these are not provided xpath evaluations will fail",
+                        type = {DataType.STRING},
+                        optional = true,
+                        defaultValue = "None"),
                 @Parameter(name = "enclosing.element",
-                           description =
-                                   "Used to specify the enclosing element in case of sending multiple events in same "
-                                           + "XML message. WSO2 DAS will treat the child element of given enclosing "
-                                           + "element as events and execute xpath expressions on child elements. If "
-                                           + "enclosing.element is not provided multiple event scenario is disregarded "
-                                           + "and xpaths will be evaluated with respect to root element.",
-                           type = {DataType.STRING},
-                           optional = true,
-                           defaultValue = "Root element"),
+                        description =
+                                "Used to specify the enclosing element in case of sending multiple events in same "
+                                        + "XML message. WSO2 DAS will treat the child element of given enclosing "
+                                        + "element as events and execute xpath expressions on child elements. If "
+                                        + "enclosing.element is not provided multiple event scenario is disregarded "
+                                        + "and xpaths will be evaluated with respect to root element.",
+                        type = {DataType.STRING},
+                        optional = true,
+                        defaultValue = "Root element"),
                 @Parameter(name = "fail.on.missing.attribute",
-                           description = "This can either have value true or false. By default it will be true. This "
-                                   + "attribute allows user to handle unknown attributes. By default if an xpath "
-                                   + "execution fails or returns null DAS will drop that message. However setting "
-                                   + "this property to false will prompt DAS to send and event with null value to "
-                                   + "Siddhi where user can handle it accordingly(ie. Assign a default value)",
-                           type = {DataType.BOOL},
-                           optional = true,
-                           defaultValue = "True")
+                        description = "This can either have value true or false. By default it will be true. This "
+                                + "attribute allows user to handle unknown attributes. By default if an xpath "
+                                + "execution fails or returns null DAS will drop that message. However setting "
+                                + "this property to false will prompt DAS to send and event with null value to "
+                                + "Siddhi where user can handle it accordingly(ie. Assign a default value)",
+                        type = {DataType.BOOL},
+                        optional = true,
+                        defaultValue = "True")
         },
         examples = {
                 @Example(
                         syntax = "@source(type='inMemory', topic='stock', @map(type='xml'))\n"
                                 + "define stream FooStream (symbol string, price float, volume long);\n",
-                        description =  "Above configuration will do a default XML input mapping. Expected "
+                        description = "Above configuration will do a default XML input mapping. Expected "
                                 + "input will look like below."
                                 + "<events>\n"
                                 + "    <event>\n"
@@ -108,7 +108,7 @@ import javax.xml.stream.XMLStreamException;
                                 + "\"dt=urn:schemas-microsoft-com:datatypes\", enclosing.element=\"//portfolio\", "
                                 + "@attributes(symbol = \"company/symbol\", price = \"price\", volume = \"volume\")))"
                                 + "\ndefine stream FooStream (symbol string, price float, volume long);",
-                        description =  "Above configuration will perform a custom XML mapping. In the custom "
+                        description = "Above configuration will perform a custom XML mapping. In the custom "
                                 + "mapping user can add xpath expressions representing each event attribute using "
                                 + "@attribute annotation. Expected "
                                 + "input will look like below.\n"
@@ -142,10 +142,12 @@ public class XmlSourceMapper extends SourceMapper {
     private List<Attribute> attributeList;
     private Map<String, Attribute.Type> attributeTypeMap = new HashMap<>();
     private Map<String, Integer> attributePositionMap = new HashMap<>();
+    private List<AttributeMapping> attributeMappingList;
 
     /**
      * Initialize the mapper and the mapping configurations.
-     *  @param streamDefinition     the  StreamDefinition
+     *
+     * @param streamDefinition     the  StreamDefinition
      * @param optionHolder         mapping options
      * @param attributeMappingList list of attributes mapping
      * @param configReader
@@ -156,6 +158,7 @@ public class XmlSourceMapper extends SourceMapper {
                      SiddhiAppContext siddhiAppContext) {
         String enclosingElementSelectorXPath;
         this.streamDefinition = streamDefinition;
+        this.attributeMappingList = attributeMappingList;
         attributeList = streamDefinition.getAttributeList();
         attributeTypeMap = new HashMap<>(attributeList.size());
         attributePositionMap = new HashMap<>(attributeList.size());
@@ -196,7 +199,8 @@ public class XmlSourceMapper extends SourceMapper {
                         } catch (JaxenException e) {
                             throw new SiddhiAppValidationException(
                                     "Error occurred when adding namespace: " + entry.getKey()
-                                    + ":" + entry.getValue() + " to XPath element: " + attributeMapping.getMapping());
+                                            + ":" + entry.getValue() + " to XPath element: "
+                                            + attributeMapping.getMapping());
                         }
                     }
                     xPathMap.put(attributeMapping.getName(), axiomxPath);
@@ -228,7 +232,8 @@ public class XmlSourceMapper extends SourceMapper {
         }
     }
 
-    @Override public Class[] getSupportedInputEventClasses() {
+    @Override
+    public Class[] getSupportedInputEventClasses() {
         return new Class[]{String.class, OMElement.class, byte[].class};
     }
 
@@ -237,7 +242,7 @@ public class XmlSourceMapper extends SourceMapper {
      * a {@link org.wso2.siddhi.core.event.ComplexEventChunk} and send to the
      * {@link org.wso2.siddhi.core.query.output.callback.OutputCallback}.
      *
-     * @param eventObject  the input event, given as an XML string
+     * @param eventObject       the input event, given as an XML string
      * @param inputEventHandler input handler
      */
     @Override
@@ -254,7 +259,8 @@ public class XmlSourceMapper extends SourceMapper {
 
     }
 
-    @Override protected boolean allowNullInTransportProperties() {
+    @Override
+    protected boolean allowNullInTransportProperties() {
         return !failOnUnknownAttribute;
     }
 
@@ -373,7 +379,7 @@ public class XmlSourceMapper extends SourceMapper {
                 log.warn("Incoming XML message should adhere to pre-defined format" +
                         "when using default mapping. Root element name should be " + EVENTS_PARENT_ELEMENT + ". But " +
                         "found " + rootOMElement.getLocalName() + ". Hence dropping XML message : " +
-                                 rootOMElement.toString());
+                        rootOMElement.toString());
             }
         }
         return eventList.toArray(new Event[0]);
@@ -385,7 +391,7 @@ public class XmlSourceMapper extends SourceMapper {
             String[] splits = ns.split("=");
             if (splits.length != 2) {
                 log.warn("Malformed namespace mapping found: " + ns + ". Each namespace has to have format: "
-                                 + "<prefix>=<uri>");
+                        + "<prefix>=<uri>");
             }
             namespaceMap.put(splits[0].trim(), splits[1].trim());
         }
@@ -394,9 +400,9 @@ public class XmlSourceMapper extends SourceMapper {
     private Event buildEvent(OMElement eventOMElement) {
         Event event = new Event(streamDefinition.getAttributeList().size());
         Object[] data = event.getData();
-        for (int i = 0; i < attributeList.size(); i++) {
-            Attribute attribute = attributeList.get(i);
-            String attributeName = attribute.getName();
+        for (AttributeMapping attributeMapping : attributeMappingList) {
+            String attributeName = attributeMapping.getName();
+            Attribute.Type attributeType = attributeTypeMap.get(attributeName);
             AXIOMXPath axiomXPath = xPathMap.get(attributeName);
             if (axiomXPath != null) { //can be null in transport properties scenario
                 try {
@@ -404,7 +410,7 @@ public class XmlSourceMapper extends SourceMapper {
                     if (selectedNodes.size() == 0) {
                         if (failOnUnknownAttribute) {
                             log.warn("Xpath: '" + axiomXPath.toString() + " did not yield any results. Hence dropping "
-                                             + "the event : " + eventOMElement.toString());
+                                    + "the event : " + eventOMElement.toString());
                             return null;
                         } else {
                             continue;
@@ -415,18 +421,19 @@ public class XmlSourceMapper extends SourceMapper {
                     if (elementObj instanceof OMElement) {
                         OMElement element = (OMElement) elementObj;
                         if (element.getFirstElement() != null) {
-                            if (attribute.getType().equals(Attribute.Type.STRING)) {
-                                data[i] = element.toString();
+                            if (attributeType.equals(Attribute.Type.STRING)) {
+                                data[attributeMapping.getPosition()] = element.toString();
                             } else {
                                 log.warn("XPath: " + axiomXPath.toString() + " did not return a leaf element and "
-                                                 + "stream definition is not expecting a String attribute. Hence "
-                                                 + "dropping the event: " + eventOMElement.toString());
+                                        + "stream definition is not expecting a String attribute. Hence "
+                                        + "dropping the event: " + eventOMElement.toString());
                                 return null;
                             }
                         } else {
                             String attributeValue = element.getText();
                             try {
-                                data[i] = attributeConverter.getPropertyValue(attributeValue, attribute.getType());
+                                data[attributeMapping.getPosition()] = attributeConverter.
+                                        getPropertyValue(attributeValue, attributeType);
                             } catch (SiddhiAppRuntimeException | NumberFormatException e) {
                                 if (failOnUnknownAttribute) {
                                     log.warn("Error occurred when extracting attribute value. Cause: " + e.getMessage()
@@ -438,8 +445,8 @@ public class XmlSourceMapper extends SourceMapper {
                     } else if (elementObj instanceof OMAttribute) {
                         OMAttribute omAttribute = (OMAttribute) elementObj;
                         try {
-                            data[i] = attributeConverter.getPropertyValue(omAttribute.getAttributeValue(),
-                                                                          attribute.getType());
+                            data[attributeMapping.getPosition()] = attributeConverter.
+                                    getPropertyValue(omAttribute.getAttributeValue(), attributeType);
                         } catch (SiddhiAppRuntimeException | NumberFormatException e) {
                             log.warn("Error occurred when extracting attribute value. Cause: " + e.getMessage() +
                                     ". Hence dropping the event: " + eventOMElement.toString());
