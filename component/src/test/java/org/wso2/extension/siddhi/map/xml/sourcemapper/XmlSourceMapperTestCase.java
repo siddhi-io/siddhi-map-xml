@@ -19,6 +19,7 @@
 package org.wso2.extension.siddhi.map.xml.sourcemapper;
 
 import org.apache.log4j.Logger;
+import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -46,11 +47,11 @@ public class XmlSourceMapperTestCase {
     /**
      * Expected input format:
      * <events>
-     *     <event>
-     *         <symbol>WSO2</symbol>
-     *         <price>55.6</price>
-     *         <volume>100</volume>
-     *     </event>
+     * <event>
+     * <symbol>WSO2</symbol>
+     * <price>55.6</price>
+     * <volume>100</volume>
+     * </event>
      * </events>
      */
     @Test
@@ -242,20 +243,20 @@ public class XmlSourceMapperTestCase {
                 EventPrinter.print(events);
                 for (Event event : events) {
                     switch (count.incrementAndGet()) {
-                    case 1:
-                        org.junit.Assert.assertEquals(55.6f, event.getData(1));
-                        break;
-                    case 2:
-                        org.junit.Assert.assertEquals(75.6f, event.getData(1));
-                        break;
-                    default:
-                        org.junit.Assert.fail();
+                        case 1:
+                            org.junit.Assert.assertEquals(55.6f, event.getData(1));
+                            break;
+                        case 2:
+                            org.junit.Assert.assertEquals(75.6f, event.getData(1));
+                            break;
+                        default:
+                            org.junit.Assert.fail();
                     }
                 }
             }
         });
 
-        String events =  "<events><event><symbol>WSO2</symbol><price>55.6</price>" +
+        String events = "<events><event><symbol>WSO2</symbol><price>55.6</price>" +
                 "<volume>100</volume></event><event><symbol>IBM</symbol><price>75.6</price>" +
                 "<volume>10</volume></event><event111><symbol>IBM</symbol><price>75.6</price>"
                 + "<volume>10</volume></event111></events>";
@@ -1020,11 +1021,11 @@ public class XmlSourceMapperTestCase {
                 EventPrinter.print(events);
                 for (Event event : events) {
                     switch (count.incrementAndGet()) {
-                    case 1:
-                        org.junit.Assert.assertEquals(55.6f, event.getData(1));
-                        break;
-                    default:
-                        org.junit.Assert.fail();
+                        case 1:
+                            org.junit.Assert.assertEquals(55.6f, event.getData(1));
+                            break;
+                        default:
+                            org.junit.Assert.fail();
                     }
                 }
             }
@@ -1176,14 +1177,14 @@ public class XmlSourceMapperTestCase {
                 EventPrinter.print(events);
                 for (Event event : events) {
                     switch (count.incrementAndGet()) {
-                    case 1:
-                        org.junit.Assert.assertEquals(55.6f, event.getData(1));
-                        break;
-                    case 2:
-                        org.junit.Assert.assertEquals(75.6f, event.getData(1));
-                        break;
-                    default:
-                        org.junit.Assert.fail();
+                        case 1:
+                            org.junit.Assert.assertEquals(55.6f, event.getData(1));
+                            break;
+                        case 2:
+                            org.junit.Assert.assertEquals(75.6f, event.getData(1));
+                            break;
+                        default:
+                            org.junit.Assert.fail();
                     }
                 }
             }
@@ -1206,6 +1207,193 @@ public class XmlSourceMapperTestCase {
                 "  </stock>" +
                 "</portfolio>" +
                 "</root>").getBytes(StandardCharsets.UTF_8));
+        //assert event count
+        AssertJUnit.assertEquals("Number of events", 2, count.get());
+        executionPlanRuntime.shutdown();
+        siddhiManager.shutdown();
+    }
+
+    @Test
+    public void testXmlInputMappingCustom18() throws InterruptedException {
+        log.info("testXmlInputMappingCustom18");
+
+        String streams = "" +
+                "@App:name('TestSiddhiApp')" +
+                "@source(type='inMemory', topic='stock', @map(type='xml', namespaces = " +
+                "\"dt=urn:schemas-microsoft-com:datatypes\"," +
+                "enclosing.element=\"//portfolio\", @attributes(\"symbol\"" +
+                "                                           , \"price\"" +
+                "                                           , \"volume\"))) " +
+                "define stream FooStream (symbol string, price float, volume long); " +
+                "define stream BarStream (symbol string, price float, volume long); ";
+
+        String query = "" +
+                "from FooStream " +
+                "select * " +
+                "insert into BarStream; ";
+
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime executionPlanRuntime = siddhiManager.createSiddhiAppRuntime(streams + query);
+
+        executionPlanRuntime.addCallback("BarStream", new StreamCallback() {
+
+            @Override
+            public void receive(Event[] events) {
+                EventPrinter.print(events);
+                for (Event event : events) {
+                    switch (count.incrementAndGet()) {
+                        case 1:
+                            org.junit.Assert.assertEquals(55.6f, event.getData(1));
+                            break;
+                        case 2:
+                            org.junit.Assert.assertEquals(75.6f, event.getData(1));
+                            break;
+                        default:
+                            org.junit.Assert.fail();
+                    }
+                }
+            }
+        });
+        executionPlanRuntime.start();
+        InMemoryBroker.publish("stock", "<?xml version=\"1.0\"?>" +
+                "<portfolio xmlns:dt=\"urn:schemas-microsoft-com:datatypes\">" +
+                "  <stock exchange=\"nasdaq\">" +
+                "    <volume>100</volume>" +
+                "    <symbol>WSO2</symbol>" +
+                "    <price dt:dt=\"number\">55.6</price>" +
+                "  </stock>" +
+                "  <stock exchange=\"nyse\">" +
+                "    <volume>200</volume>" +
+                "    <symbol>IBM</symbol>" +
+                "    <price dt:dt=\"number\">75.6</price>" +
+                "  </stock>" +
+                "</portfolio>");
+        //assert event count
+        AssertJUnit.assertEquals("Number of events", 2, count.get());
+        executionPlanRuntime.shutdown();
+        siddhiManager.shutdown();
+    }
+
+    @Test
+    public void testXmlInputMappingCustom19() throws InterruptedException {
+        log.info("testXmlInputMappingCustom19");
+
+        String streams = "" +
+                "@App:name('TestSiddhiApp')" +
+                "@source(type='testTrpInMemory', prop1='foo', prop2='bar', " +
+                "topic='stock', @map(type='xml', namespaces = " +
+                "\"dt=urn:schemas-microsoft-com:datatypes\"," +
+                "enclosing.element=\"//portfolio\", @attributes(\"trp:symbol\"" +
+                "                                           , \"price\"" +
+                "                                           , \"volume\"))) " +
+                "define stream FooStream (symbol string, price float, volume long); " +
+                "define stream BarStream (symbol string, price float, volume long); ";
+
+        String query = "" +
+                "from FooStream " +
+                "select * " +
+                "insert into BarStream; ";
+
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime executionPlanRuntime = siddhiManager.createSiddhiAppRuntime(streams + query);
+
+        executionPlanRuntime.addCallback("BarStream", new StreamCallback() {
+
+            @Override
+            public void receive(Event[] events) {
+                EventPrinter.print(events);
+                for (Event event : events) {
+                    Assert.assertEquals("foo", event.getData(0));
+                    switch (count.incrementAndGet()) {
+                        case 1:
+                            org.junit.Assert.assertEquals(55.6f, event.getData(1));
+                            break;
+                        case 2:
+                            org.junit.Assert.assertEquals(75.6f, event.getData(1));
+                            break;
+                        default:
+                            org.junit.Assert.fail();
+                    }
+                }
+            }
+        });
+        executionPlanRuntime.start();
+        InMemoryBroker.publish("stock", "<?xml version=\"1.0\"?>" +
+                "<portfolio xmlns:dt=\"urn:schemas-microsoft-com:datatypes\">" +
+                "  <stock exchange=\"nasdaq\">" +
+                "    <volume>100</volume>" +
+                "    <symbol>WSO2</symbol>" +
+                "    <price dt:dt=\"number\">55.6</price>" +
+                "  </stock>" +
+                "  <stock exchange=\"nyse\">" +
+                "    <volume>200</volume>" +
+                "    <symbol>IBM</symbol>" +
+                "    <price dt:dt=\"number\">75.6</price>" +
+                "  </stock>" +
+                "</portfolio>");
+        //assert event count
+        AssertJUnit.assertEquals("Number of events", 2, count.get());
+        executionPlanRuntime.shutdown();
+        siddhiManager.shutdown();
+    }
+
+    @Test
+    public void testXmlInputMappingCustom20() throws InterruptedException {
+        log.info("testXmlInputMappingCustom20");
+
+        String streams = "" +
+                "@App:name('TestSiddhiApp')" +
+                "@source(type='testTrpInMemory', prop1='foo', prop2='bar', " +
+                "topic='stock', @map(type='xml', namespaces = " +
+                "\"dt=urn:schemas-microsoft-com:datatypes\"," +
+                "enclosing.element=\"//portfolio\", @attributes(volume=\"volume\"" +
+                "                                           , price=\"price\"" +
+                "                                           , symbol=\"trp:symbol\"))) " +
+                "define stream FooStream (symbol string, price float, volume long); " +
+                "define stream BarStream (symbol string, price float, volume long); ";
+
+        String query = "" +
+                "from FooStream " +
+                "select * " +
+                "insert into BarStream; ";
+
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime executionPlanRuntime = siddhiManager.createSiddhiAppRuntime(streams + query);
+
+        executionPlanRuntime.addCallback("BarStream", new StreamCallback() {
+
+            @Override
+            public void receive(Event[] events) {
+                EventPrinter.print(events);
+                for (Event event : events) {
+                    Assert.assertEquals("foo", event.getData(0));
+                    switch (count.incrementAndGet()) {
+                        case 1:
+                            org.junit.Assert.assertEquals(55.6f, event.getData(1));
+                            break;
+                        case 2:
+                            org.junit.Assert.assertEquals(75.6f, event.getData(1));
+                            break;
+                        default:
+                            org.junit.Assert.fail();
+                    }
+                }
+            }
+        });
+        executionPlanRuntime.start();
+        InMemoryBroker.publish("stock", "<?xml version=\"1.0\"?>" +
+                "<portfolio xmlns:dt=\"urn:schemas-microsoft-com:datatypes\">" +
+                "  <stock exchange=\"nasdaq\">" +
+                "    <volume>100</volume>" +
+                "    <symbol>WSO2</symbol>" +
+                "    <price dt:dt=\"number\">55.6</price>" +
+                "  </stock>" +
+                "  <stock exchange=\"nyse\">" +
+                "    <volume>200</volume>" +
+                "    <symbol>IBM</symbol>" +
+                "    <price dt:dt=\"number\">75.6</price>" +
+                "  </stock>" +
+                "</portfolio>");
         //assert event count
         AssertJUnit.assertEquals("Number of events", 2, count.get());
         executionPlanRuntime.shutdown();
