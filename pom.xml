@@ -113,7 +113,7 @@
         </plugins>
     </build>
     <properties>
-        <siddhi.version>4.1.28</siddhi.version>
+        <siddhi.version>4.1.38</siddhi.version>
         <log4j.version>1.2.17.wso2v1</log4j.version>
         <axiom.version>1.2.20</axiom.version>
         <junit.version>4.12</junit.version>
