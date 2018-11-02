@@ -69,6 +69,7 @@ import javax.xml.parsers.ParserConfigurationException;
                                         "enclosing element is not specified, one XML message per every event will be "
                                         + "emitted without enclosing.",
                         type = {DataType.STRING},
+                        optional = true,
                         defaultValue = "None in custom mapping and &lt;events&gt; in default mapping")
         },
         examples = {
