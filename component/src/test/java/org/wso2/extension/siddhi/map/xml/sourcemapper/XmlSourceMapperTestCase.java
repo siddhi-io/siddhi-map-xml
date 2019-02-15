@@ -55,7 +55,7 @@ public class XmlSourceMapperTestCase {
      * </events>
      */
     @Test
-    public void testXmlInputMappingDefault() throws InterruptedException {
+    public void testXmlInputMappingDefault() throws Exception {
         log.info("Test case for xml input mapping with default mapping");
 
         String streams = "" +
@@ -121,7 +121,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingDefaultMultipleEvents() throws InterruptedException {
+    public void testXmlInputMappingDefaultMultipleEvents() throws Exception {
         log.info("Test case for xml input mapping with default mapping for multiple events");
 
         String streams = "" +
@@ -170,7 +170,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingDefaultNegative() throws InterruptedException {
+    public void testXmlInputMappingDefaultNegative() throws Exception {
         log.info("Test case for xml input mapping with default mapping for multiple events");
 
         String streams = "" +
@@ -219,7 +219,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingDefaultMultipleEventsOnBinaryMessage() throws InterruptedException {
+    public void testXmlInputMappingDefaultMultipleEventsOnBinaryMessage() throws Exception {
         log.info("Test case for xml input mapping with default mapping for multiple events");
 
         String streams = "" +
@@ -270,7 +270,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom1() throws InterruptedException {
+    public void testXmlInputMappingCustom1() throws Exception {
         log.info("Test case for xml input mapping with custom mapping. Here multiple events are sent in one message.");
 
         String streams = "" +
@@ -372,7 +372,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom2() throws InterruptedException {
+    public void testXmlInputMappingCustom2() throws Exception {
         log.info("Test case for xml input mapping with custom mapping. Here, only one event is sent in a message.");
 
         String streams = "" +
@@ -440,7 +440,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom3() throws InterruptedException {
+    public void testXmlInputMappingCustom3() throws Exception {
         log.info("Test case for xml input mapping with custom mapping with complex xpath to extract one attribute. " +
                 "Here multiple events are sent in one message.");
 
@@ -513,7 +513,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom4() throws InterruptedException {
+    public void testXmlInputMappingCustom4() throws Exception {
         log.info("Test case for xml input mapping with custom mapping where @attribute is not present");
 
         String streams = "" +
@@ -566,7 +566,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom5() throws InterruptedException {
+    public void testXmlInputMappingCustom5() throws Exception {
         log.info("Verify xml message correctly mapped without grouping element with correct xpath from root");
 
         String streams = "" +
@@ -624,7 +624,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom6() throws InterruptedException {
+    public void testXmlInputMappingCustom6() throws Exception {
         log.info("Verify xml message being dropped due to incorrect namespace in mapping");
 
         String streams = "" +
@@ -685,7 +685,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom7() throws InterruptedException {
+    public void testXmlInputMappingCustom7() throws Exception {
         log.info("Verify xml message being dropped without grouping element when incorrect xpath is used from root");
 
         String streams = "" +
@@ -740,7 +740,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom8() throws InterruptedException {
+    public void testXmlInputMappingCustom8() throws Exception {
         log.info("Verify xml message being dropped due to incorrect grouping element configuration");
 
         String streams = "" +
@@ -835,7 +835,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom10() throws InterruptedException {
+    public void testXmlInputMappingCustom10() throws Exception {
         log.info("Verify xml mapping when elements defined are non existent and fail.on.missing.attribute is false");
 
         String streams = "" +
@@ -896,7 +896,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom11() throws InterruptedException {
+    public void testXmlInputMappingCustom11() throws Exception {
         log.info("Verify xml mapping when multiple enclosing tags are present");
 
         String streams = "" +
@@ -961,7 +961,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom12() throws InterruptedException {
+    public void testXmlInputMappingCustom12() throws Exception {
         log.info("Check incoming XML event");
         log = Logger.getLogger(XmlSourceMapper.class);
         UnitTestAppender appender = new UnitTestAppender();
@@ -992,7 +992,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom13() throws InterruptedException {
+    public void testXmlInputMappingCustom13() throws Exception {
         log.info("Test case for name space format.");
         log = Logger.getLogger(XmlSourceMapper.class);
         UnitTestAppender appender = new UnitTestAppender();
@@ -1046,7 +1046,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom15() throws InterruptedException {
+    public void testXmlInputMappingCustom15() throws Exception {
         log.info("Test case for If elementObj instanceof OMElement and element.getFirstElement() "
                 + "!= null then check attribute's type not String .");
         log = Logger.getLogger(XmlSourceMapper.class);
@@ -1087,7 +1087,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustomForEvents() throws InterruptedException {
+    public void testXmlInputMappingCustomForEvents() throws Exception {
         log.info("Test case for if elementObj instanceof OMAttribute but some problem occurred during convert data.");
         log = Logger.getLogger(XmlSourceMapper.class);
         UnitTestAppender appender = new UnitTestAppender();
@@ -1149,7 +1149,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustomOnBinaryMessage17() throws InterruptedException {
+    public void testXmlInputMappingCustomOnBinaryMessage17() throws Exception {
         log.info("Verify xml mapping when multiple enclosing tags are present");
 
         String streams = "" +
@@ -1214,7 +1214,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom18() throws InterruptedException {
+    public void testXmlInputMappingCustom18() throws Exception {
         log.info("testXmlInputMappingCustom18");
 
         String streams = "" +
@@ -1275,7 +1275,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom19() throws InterruptedException {
+    public void testXmlInputMappingCustom19() throws Exception {
         log.info("testXmlInputMappingCustom19");
 
         String streams = "" +
@@ -1338,7 +1338,7 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
-    public void testXmlInputMappingCustom20() throws InterruptedException {
+    public void testXmlInputMappingCustom20() throws Exception {
         log.info("testXmlInputMappingCustom20");
 
         String streams = "" +
