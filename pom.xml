@@ -38,17 +38,17 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.wso2.siddhi</groupId>
+                <groupId>io.siddhi</groupId>
                 <artifactId>siddhi-core</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.siddhi</groupId>
+                <groupId>io.siddhi</groupId>
                 <artifactId>siddhi-query-api</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.siddhi</groupId>
+                <groupId>io.siddhi</groupId>
                 <artifactId>siddhi-annotations</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
@@ -113,7 +113,7 @@
         </plugins>
     </build>
     <properties>
-        <siddhi.version>4.4.8</siddhi.version>
+        <siddhi.version>5.0.0-m4</siddhi.version>
         <log4j.version>1.2.17.wso2v1</log4j.version>
         <axiom.version>1.2.20</axiom.version>
         <junit.version>4.12</junit.version>
