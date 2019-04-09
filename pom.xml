@@ -28,7 +28,7 @@
 
     <groupId>org.wso2.extension.siddhi.map.xml</groupId>
     <artifactId>siddhi-map-xml-parent</artifactId>
-    <version>4.1.1-SNAPSHOT</version>
+    <version>5.0.1-SNAPSHOT</version>
     <name>Siddhi XML Map Extensions</name>
 
     <modules>
@@ -38,17 +38,17 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.wso2.siddhi</groupId>
+                <groupId>io.siddhi</groupId>
                 <artifactId>siddhi-core</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.siddhi</groupId>
+                <groupId>io.siddhi</groupId>
                 <artifactId>siddhi-query-api</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.wso2.siddhi</groupId>
+                <groupId>io.siddhi</groupId>
                 <artifactId>siddhi-annotations</artifactId>
                 <version>${siddhi.version}</version>
             </dependency>
