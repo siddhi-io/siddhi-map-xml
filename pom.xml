@@ -28,7 +28,7 @@
 
     <groupId>org.wso2.extension.siddhi.map.xml</groupId>
     <artifactId>siddhi-map-xml-parent</artifactId>
-    <version>4.1.1-SNAPSHOT</version>
+    <version>4.1.2</version>
     <name>Siddhi XML Map Extensions</name>
 
     <modules>
@@ -129,7 +129,7 @@
         <url>https://github.com/wso2-extensions/siddhi-map-xml.git</url>
         <developerConnection>scm:git:https://github.com/wso2-extensions/siddhi-map-xml.git</developerConnection>
         <connection>scm:git:https://github.com/wso2-extensions/siddhi-map-xml.git</connection>
-        <tag>HEAD</tag>
+        <tag>v4.1.2</tag>
     </scm>
 
 </project>
