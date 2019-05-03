@@ -22,9 +22,9 @@
 <suite name="xml sink mapper test suite">
     <test name="xmlSinkMapperTest">
         <classes>
-            <class name="org.wso2.extension.siddhi.map.xml.sinkmapper.XMLSinkMapperWithSiddhiQLTestCase" />
-            <class name="org.wso2.extension.siddhi.map.xml.sinkmapper.XMLSinkMapperWithSiddhiQueryAPITestCase" />
-            <class name="org.wso2.extension.siddhi.map.xml.sourcemapper.XmlSourceMapperTestCase" />
+            <class name="io.siddhi.extension.map.xml.sinkmapper.XMLSinkMapperWithSiddhiQLTestCase" />
+            <class name="io.siddhi.extension.map.xml.sinkmapper.XMLSinkMapperWithSiddhiQueryAPITestCase" />
+            <class name="io.siddhi.extension.map.xml.sourcemapper.XmlSourceMapperTestCase" />
         </classes>
     </test>
 </suite>
