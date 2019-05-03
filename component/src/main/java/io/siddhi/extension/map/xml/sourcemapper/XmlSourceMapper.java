@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.extension.siddhi.map.xml.sourcemapper;
+package io.siddhi.extension.map.xml.sourcemapper;
 
 import io.siddhi.annotation.Example;
 import io.siddhi.annotation.Extension;

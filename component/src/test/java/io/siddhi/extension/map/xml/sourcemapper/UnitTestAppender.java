@@ -17,7 +17,7 @@
  *
  */
 
-package org.wso2.extension.siddhi.map.xml.sourcemapper;
+package io.siddhi.extension.map.xml.sourcemapper;
 
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;

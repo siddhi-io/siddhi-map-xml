@@ -18,7 +18,7 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>org.wso2.extension.siddhi.map.xml</groupId>
+        <groupId>io.siddhi.extension.map.xml</groupId>
         <artifactId>siddhi-map-xml-parent</artifactId>
         <version>5.0.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -100,7 +100,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Export-Package>
-                            org.wso2.extension.siddhi.map.xml.*
+                            io.siddhi.extension.map.xml.*
                         </Export-Package>
                         <Import-Package>
                             io.siddhi.core.*;version="${siddhi.version.range}",
