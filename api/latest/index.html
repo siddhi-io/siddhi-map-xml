@@ -106,7 +106,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#api-docs-v412" tabindex="1" class="md-skip">
+      <a href="#api-docs-v502" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -282,8 +282,32 @@
 
 
   <li class="md-nav__item">
-    <a href="../4.1.2/" title="4.1.2" class="md-nav__link">
-      4.1.2
+    <a href="../5.0.2/" title="5.0.2" class="md-nav__link">
+      5.0.2
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.0.1/" title="5.0.1" class="md-nav__link">
+      5.0.1
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.0.0/" title="5.0.0" class="md-nav__link">
+      5.0.0
     </a>
   </li>
 
@@ -719,9 +743,9 @@
                   <a href="https://github.com/wso2-extensions/siddhi-map-xml/edit/master/docs/api/latest.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="api-docs-v412">API Docs - v4.1.2<a class="headerlink" href="#api-docs-v412" title="Permanent link">&para;</a></h1>
+                <h1 id="api-docs-v502">API Docs - v5.0.2<a class="headerlink" href="#api-docs-v502" title="Permanent link">&para;</a></h1>
 <h2 id="sinkmapper">Sinkmapper<a class="headerlink" href="#sinkmapper" title="Permanent link">&para;</a></h2>
-<h3 id="xml-sink-mapper">xml <em><a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#sink-mapper">(Sink Mapper)</a></em><a class="headerlink" href="#xml-sink-mapper" title="Permanent link">&para;</a></h3>
+<h3 id="xml-sink-mapper">xml <em><a target="_blank" href="http://siddhi.io/documentation/siddhi-5.x/query-guide-5.x/#sink-mapper">(Sink Mapper)</a></em><a class="headerlink" href="#xml-sink-mapper" title="Permanent link">&para;</a></h3>
 <p style="word-wrap: break-word">This mapper converts Siddhi output events to XML before they are published via transports that publish in XML format. Users can either send a pre-defined XML format or a custom XML message containing event data.</p>
 
 <p><span id="syntax" class="md-typeset" style="display: block; font-weight: bold;">Syntax</span></p>
@@ -774,7 +798,7 @@ define stream BarStream (symbol string, price float, volume long);
 <p style="word-wrap: break-word">Above configuration will perform a custom XML mapping. Inside @payload you can specify the custom template that you want to send the messages out and addd placeholders to places where you need to add event attributes.Above config will produce below output XML message<br>&lt;portfolio&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;StockData&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Symbol&gt;WSO2&lt;/Symbol&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Price&gt;55.6&lt;/Price&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/StockData&gt;<br>&lt;/portfolio&gt;</p>
 
 <h2 id="sourcemapper">Sourcemapper<a class="headerlink" href="#sourcemapper" title="Permanent link">&para;</a></h2>
-<h3 id="xml-source-mapper">xml <em><a target="_blank" href="https://wso2.github.io/siddhi/documentation/siddhi-4.0/#source-mapper">(Source Mapper)</a></em><a class="headerlink" href="#xml-source-mapper" title="Permanent link">&para;</a></h3>
+<h3 id="xml-source-mapper">xml <em><a target="_blank" href="http://siddhi.io/documentation/siddhi-5.x/query-guide-5.x/#source-mapper">(Source Mapper)</a></em><a class="headerlink" href="#xml-source-mapper" title="Permanent link">&para;</a></h3>
 <p style="word-wrap: break-word">This mapper converts XML input to Siddhi event. Transports which accepts XML messages can utilize this extension to convert the incoming XML message to Siddhi event. Users can either send a pre-defined XML format where event conversion will happen without any configs or can use xpath to map from a custom XML message.</p>
 
 <p><span id="syntax" class="md-typeset" style="display: block; font-weight: bold;">Syntax</span></p>
