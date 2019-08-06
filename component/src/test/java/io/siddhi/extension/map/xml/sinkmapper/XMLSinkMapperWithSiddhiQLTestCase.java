@@ -465,8 +465,8 @@ public class XMLSinkMapperWithSiddhiQLTestCase {
                 "@App:name('TestSiddhiApp')" +
                 "define stream FooStream (id int, symbol string, price float, volume long); " +
                 "@sink(type='inMemory', topic='{{symbol}}', @map(type='xml', @payload(" +
-                "\"<StockData><Symbol id=''{{id}}'' value=''{{price}}''>{{symbol}}</Symbol>"
-                + "<Price company=''{{symbol}}''>{{price}}</Price></StockData>\"))) " +
+                "\"<StockData><Symbol id='{{id}}' value='{{price}}'>{{symbol}}</Symbol>"
+                + "<Price company='{{symbol}}'>{{price}}</Price></StockData>\"))) " +
                 "define stream BarStream (id int, symbol string, price float, volume long); ";
         String query = "" +
                 "from FooStream " +
@@ -1196,8 +1196,8 @@ public class XMLSinkMapperWithSiddhiQLTestCase {
                 "@App:name('TestSiddhiApp')" +
                 "define stream FooStream (id int, symbol string, price float, volume long); " +
                 "@sink(type='inMemory', topic='{{symbol}}', @map(type='xml', @payload(" +
-                "\"<StockData><Symbol id=''{{id}}'' value=''{{price}}''>{{symbol}}</Symbol>"
-                + "<Price company=''{{symbol}}''>{{price}}</Price></StockData>\"))) " +
+                "\"<StockData><Symbol id='{{id}}' value='{{price}}'>{{symbol}}</Symbol>"
+                + "<Price company='{{symbol}}'>{{price}}</Price></StockData>\"))) " +
                 "define stream BarStream (id int, symbol string, price float, volume long); ";
         String query = "" +
                 "from FooStream " +
