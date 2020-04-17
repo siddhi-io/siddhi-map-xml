@@ -1214,6 +1214,63 @@ public class XmlSourceMapperTestCase {
     }
 
     @Test
+    public void testXmlInputMappingCustomOnNoChildrenInXpath() throws Exception {
+        log.info("Verify xml mapping when multiple enclosing tags are present with no child elements");
+
+        String streams = "" +
+                "@App:name('TestSiddhiApp')" +
+                "@source(type='inMemory', topic='stock', @map(type='xml', " +
+                "enclosing.element=\"//message/listNode/data\", @attributes(data = \"data\")," +
+                "enclosing.element.as.event=\"true\")) " +
+                "define stream FooStream (data int); " +
+                "define stream BarStream (data int); ";
+
+        String query = "" +
+                "from FooStream " +
+                "select * " +
+                "insert into BarStream; ";
+
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime executionPlanRuntime = siddhiManager.createSiddhiAppRuntime(streams + query);
+
+        executionPlanRuntime.addCallback("BarStream", new StreamCallback() {
+
+            @Override
+            public void receive(Event[] events) {
+                EventPrinter.print(events);
+                for (Event event : events) {
+                    switch (count.incrementAndGet()) {
+                        case 1:
+                            org.junit.Assert.assertEquals(1, event.getData(0));
+                            break;
+                        case 2:
+                            org.junit.Assert.assertEquals(2, event.getData(0));
+                            break;
+                        case 3:
+                            org.junit.Assert.assertEquals(3, event.getData(0));
+                            break;
+                        default:
+                            org.junit.Assert.fail();
+                    }
+                }
+            }
+        });
+        executionPlanRuntime.start();
+        InMemoryBroker.publish("stock", ("<?xml version=\"1.0\"?>" +
+                "<message>\n" +
+                "    <listNode>\n" +
+                "       <data>1</data>\n" +
+                "       <data>2</data>\n" +
+                "       <data>3</data>\n" +
+                "    </listNode>\n" +
+                "</message>").getBytes(StandardCharsets.UTF_8));
+        //assert event count
+        AssertJUnit.assertEquals("Number of events", 3, count.get());
+        executionPlanRuntime.shutdown();
+        siddhiManager.shutdown();
+    }
+
+    @Test
     public void testXmlInputMappingCustom18() throws Exception {
         log.info("testXmlInputMappingCustom18");
 
