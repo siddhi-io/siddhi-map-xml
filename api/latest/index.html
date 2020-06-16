@@ -114,7 +114,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#api-docs-v503" tabindex="1" class="md-skip">
+      <a href="#api-docs-v504" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -358,6 +358,18 @@
   
 </nav>
     
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../5.0.4/" title="5.0.4" class="md-nav__link">
+      5.0.4
+    </a>
   </li>
 
         
@@ -757,12 +769,17 @@
                   <a href="https://github.com/siddhi-io/siddhi-map-xml/blob/master/api/latest.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="api-docs-v503">API Docs - v5.0.3</h1>
+                <h1 id="api-docs-v504">API Docs - v5.0.4</h1>
+<div class="admonition info">
+<p class="admonition-title">Tested Siddhi Core version: <em><a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/">5.1.13</a></em></p>
+<p>It could also support other Siddhi Core minor versions.</p>
+</div>
 <h2 id="sinkmapper">Sinkmapper</h2>
-<h3 id="xml-sink-mapper">xml <em><a target="_blank" href="https://siddhi.io/en/v5.0/docs/query-guide/#sink-mapper">(Sink Mapper)</a></em></h3>
-<p style="word-wrap: break-word">This mapper converts Siddhi output events to XML before they are published via transports that publish in XML format. Users can either send a pre-defined XML format or a custom XML message containing event data.</p>
-
-<p><span id="syntax" class="md-typeset" style="display: block; font-weight: bold;">Syntax</span></p>
+<h3 id="xml-sink-mapper">xml <em><a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#sink-mapper">(Sink Mapper)</a></em></h3>
+<p><p></p>
+<p style="word-wrap: break-word;margin: 0;">This mapper converts Siddhi output events to XML before they are published via transports that publish in XML format. Users can either send a pre-defined XML format or a custom XML message containing event data.</p>
+<p></p>
+<span id="syntax" class="md-typeset" style="display: block; font-weight: bold;">Syntax</span></p>
 <pre><code>@sink(..., @map(type=&quot;xml&quot;, validate.xml=&quot;&lt;BOOL&gt;&quot;, enclosing.element=&quot;&lt;STRING&gt;&quot;)
 </code></pre>
 
@@ -778,7 +795,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">validate.xml</td>
-        <td style="vertical-align: top; word-wrap: break-word">This parameter specifies whether the XML messages generated should be validated or not. If this parameter is set to true, messages that do not adhere to proper XML standards are dropped. </td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">This parameter specifies whether the XML messages generated should be validated or not. If this parameter is set to true, messages that do not adhere to proper XML standards are dropped. </p></td>
         <td style="vertical-align: top">false</td>
         <td style="vertical-align: top">BOOL</td>
         <td style="vertical-align: top">Yes</td>
@@ -786,7 +803,7 @@
     </tr>
     <tr>
         <td style="vertical-align: top">enclosing.element</td>
-        <td style="vertical-align: top; word-wrap: break-word">When an enclosing element is specified, the child elements (e.g., the immediate child elements) of that element are considered as events. This is useful when you need to send multiple events in a single XML message. When an enclosing element is not specified, one XML message per every event will be emitted without enclosing.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">When an enclosing element is specified, the child elements (e.g., the immediate child elements) of that element are considered as events. This is useful when you need to send multiple events in a single XML message. When an enclosing element is not specified, one XML message per every event will be emitted without enclosing.</p></td>
         <td style="vertical-align: top">None in custom mapping and &lt;events&gt; in default mapping</td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">Yes</td>
@@ -800,21 +817,30 @@ define stream FooStream (symbol string, price float, volume long);
 
 </code></pre>
 
-<p style="word-wrap: break-word">Above configuration will do a default XML input mapping which will generate below output<br>&lt;events&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;event&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;symbol&gt;WSO2&lt;/symbol&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;price&gt;55.6&lt;/price&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;volume&gt;100&lt;/volume&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/event&gt;<br>&lt;/events&gt;<br></p>
+<p></p>
+
+<p style="word-wrap: break-word;margin: 0;">Above configuration will do a default XML input mapping which will generate below output<br>&lt;events&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;event&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;symbol&gt;WSO2&lt;/symbol&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;price&gt;55.6&lt;/price&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;volume&gt;100&lt;/volume&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/event&gt;<br>&lt;/events&gt;<br></p>
+
+<p></p>
 
 <p><span id="example-2" class="md-typeset" style="display: block; color: rgba(0, 0, 0, 0.54); font-size: 12.8px; font-weight: bold;">EXAMPLE 2</span></p>
 <pre><code>@sink(type='inMemory', topic='{{symbol}}', @map(type='xml', enclosing.element='&lt;portfolio&gt;', validate.xml='true', @payload( &quot;&lt;StockData&gt;&lt;Symbol&gt;{{symbol}}&lt;/Symbol&gt;&lt;Price&gt;{{price}}&lt;/Price&gt;&lt;/StockData&gt;&quot;)))
 define stream BarStream (symbol string, price float, volume long);
 </code></pre>
 
-<p style="word-wrap: break-word">Above configuration will perform a custom XML mapping. Inside @payload you can specify the custom template that you want to send the messages out and addd placeholders to places where you need to add event attributes.Above config will produce below output XML message<br>&lt;portfolio&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;StockData&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Symbol&gt;WSO2&lt;/Symbol&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Price&gt;55.6&lt;/Price&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/StockData&gt;<br>&lt;/portfolio&gt;</p>
+<p></p>
+
+<p style="word-wrap: break-word;margin: 0;">Above configuration will perform a custom XML mapping. Inside @payload you can specify the custom template that you want to send the messages out and addd placeholders to places where you need to add event attributes.Above config will produce below output XML message<br>&lt;portfolio&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;StockData&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Symbol&gt;WSO2&lt;/Symbol&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Price&gt;55.6&lt;/Price&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/StockData&gt;<br>&lt;/portfolio&gt;</p>
+
+<p></p>
 
 <h2 id="sourcemapper">Sourcemapper</h2>
-<h3 id="xml-source-mapper">xml <em><a target="_blank" href="https://siddhi.io/en/v5.0/docs/query-guide/#source-mapper">(Source Mapper)</a></em></h3>
-<p style="word-wrap: break-word">This mapper converts XML input to Siddhi event. Transports which accepts XML messages can utilize this extension to convert the incoming XML message to Siddhi event. Users can either send a pre-defined XML format where event conversion will happen without any configs or can use xpath to map from a custom XML message.</p>
-
-<p><span id="syntax" class="md-typeset" style="display: block; font-weight: bold;">Syntax</span></p>
-<pre><code>@source(..., @map(type=&quot;xml&quot;, namespaces=&quot;&lt;STRING&gt;&quot;, enclosing.element=&quot;&lt;STRING&gt;&quot;, fail.on.missing.attribute=&quot;&lt;BOOL&gt;&quot;)
+<h3 id="xml-source-mapper">xml <em><a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#source-mapper">(Source Mapper)</a></em></h3>
+<p><p></p>
+<p style="word-wrap: break-word;margin: 0;">This mapper converts XML input to Siddhi event. Transports which accepts XML messages can utilize this extension to convert the incoming XML message to Siddhi event. Users can either send a pre-defined XML format where event conversion will happen without any configs or can use xpath to map from a custom XML message.</p>
+<p></p>
+<span id="syntax" class="md-typeset" style="display: block; font-weight: bold;">Syntax</span></p>
+<pre><code>@source(..., @map(type=&quot;xml&quot;, namespaces=&quot;&lt;STRING&gt;&quot;, enclosing.element=&quot;&lt;STRING&gt;&quot;, enclosing.element.as.event=&quot;&lt;BOOL&gt;&quot;, fail.on.missing.attribute=&quot;&lt;BOOL&gt;&quot;)
 </code></pre>
 
 <p><span id="query-parameters" class="md-typeset" style="display: block; color: rgba(0, 0, 0, 0.54); font-size: 12.8px; font-weight: bold;">QUERY PARAMETERS</span>
@@ -829,7 +855,7 @@ define stream BarStream (symbol string, price float, volume long);
     </tr>
     <tr>
         <td style="vertical-align: top">namespaces</td>
-        <td style="vertical-align: top; word-wrap: break-word">Used to provide namespaces used in the incoming XML message beforehand to configure xpath expressions. User can provide a comma separated list. If these are not provided xpath evaluations will fail</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">Used to provide namespaces used in the incoming XML message beforehand to configure xpath expressions. User can provide a comma separated list. If these are not provided xpath evaluations will fail</p></td>
         <td style="vertical-align: top">None</td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">Yes</td>
@@ -837,15 +863,23 @@ define stream BarStream (symbol string, price float, volume long);
     </tr>
     <tr>
         <td style="vertical-align: top">enclosing.element</td>
-        <td style="vertical-align: top; word-wrap: break-word">Used to specify the enclosing element in case of sending multiple events in same XML message. WSO2 DAS will treat the child element of given enclosing element as events and execute xpath expressions on child elements. If enclosing.element is not provided multiple event scenario is disregarded and xpaths will be evaluated with respect to root element.</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">Used to specify the enclosing element in case of sending multiple events in same XML message. WSO2 DAS will treat the child element of given enclosing element as events and execute xpath expressions on child elements. If enclosing.element is not provided multiple event scenario is disregarded and xpaths will be evaluated with respect to root element.</p></td>
         <td style="vertical-align: top">Root element</td>
         <td style="vertical-align: top">STRING</td>
         <td style="vertical-align: top">Yes</td>
         <td style="vertical-align: top">No</td>
     </tr>
     <tr>
+        <td style="vertical-align: top">enclosing.element.as.event</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">This can either have value true or false. By default it will be false. This attribute specifies whether the given enclosing element, it self is the event. The user will be able to handle events which doesn't have multiple attributes or when the enclosing event doesnt contain any children.</p></td>
+        <td style="vertical-align: top">False</td>
+        <td style="vertical-align: top">BOOL</td>
+        <td style="vertical-align: top">Yes</td>
+        <td style="vertical-align: top">No</td>
+    </tr>
+    <tr>
         <td style="vertical-align: top">fail.on.missing.attribute</td>
-        <td style="vertical-align: top; word-wrap: break-word">This can either have value true or false. By default it will be true. This attribute allows user to handle unknown attributes. By default if an xpath execution fails or returns null DAS will drop that message. However setting this property to false will prompt DAS to send and event with null value to Siddhi where user can handle it accordingly(ie. Assign a default value)</td>
+        <td style="vertical-align: top; word-wrap: break-word"><p style="word-wrap: break-word;margin: 0;">This can either have value true or false. By default it will be true. This attribute allows user to handle unknown attributes. By default if an xpath execution fails or returns null DAS will drop that message. However setting this property to false will prompt DAS to send and event with null value to Siddhi where user can handle it accordingly(ie. Assign a default value)</p></td>
         <td style="vertical-align: top">True</td>
         <td style="vertical-align: top">BOOL</td>
         <td style="vertical-align: top">Yes</td>
@@ -859,14 +893,22 @@ define stream FooStream (symbol string, price float, volume long);
 
 </code></pre>
 
-<p style="word-wrap: break-word">Above configuration will do a default XML input mapping. Expected input will look like below.&lt;events&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;event&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;symbol&gt;WSO2&lt;/symbol&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;price&gt;55.6&lt;/price&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;volume&gt;100&lt;/volume&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/event&gt;<br>&lt;/events&gt;<br></p>
+<p></p>
+
+<p style="word-wrap: break-word;margin: 0;">Above configuration will do a default XML input mapping. Expected input will look like below.&lt;events&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;event&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;symbol&gt;WSO2&lt;/symbol&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;price&gt;55.6&lt;/price&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;volume&gt;100&lt;/volume&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/event&gt;<br>&lt;/events&gt;<br></p>
+
+<p></p>
 
 <p><span id="example-2" class="md-typeset" style="display: block; color: rgba(0, 0, 0, 0.54); font-size: 12.8px; font-weight: bold;">EXAMPLE 2</span></p>
 <pre><code>@source(type='inMemory', topic='stock', @map(type='xml', namespaces = &quot;dt=urn:schemas-microsoft-com:datatypes&quot;, enclosing.element=&quot;//portfolio&quot;, @attributes(symbol = &quot;company/symbol&quot;, price = &quot;price&quot;, volume = &quot;volume&quot;)))
 define stream FooStream (symbol string, price float, volume long);
 </code></pre>
 
-<p style="word-wrap: break-word">Above configuration will perform a custom XML mapping. In the custom mapping user can add xpath expressions representing each event attribute using @attribute annotation. Expected input will look like below.<br>&lt;portfolio xmlns:dt="urn:schemas-microsoft-com:datatypes"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;stock exchange="nasdaq"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;volume&gt;100&lt;/volume&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;company&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;symbol&gt;WSO2&lt;/symbol&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/company&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;price dt:type="number"&gt;55.6&lt;/price&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/stock&gt;<br>&lt;/portfolio&gt;</p>
+<p></p>
+
+<p style="word-wrap: break-word;margin: 0;">Above configuration will perform a custom XML mapping. In the custom mapping user can add xpath expressions representing each event attribute using @attribute annotation. Expected input will look like below.<br>&lt;portfolio xmlns:dt="urn:schemas-microsoft-com:datatypes"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;stock exchange="nasdaq"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;volume&gt;100&lt;/volume&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;company&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;symbol&gt;WSO2&lt;/symbol&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/company&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;price dt:type="number"&gt;55.6&lt;/price&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/stock&gt;<br>&lt;/portfolio&gt;</p>
+
+<p></p>
                 
                   
                 
@@ -902,13 +944,13 @@ define stream FooStream (symbol string, price float, volume long);
           </a>
         
         
-          <a href="../5.0.3/" title="5.0.3" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../5.0.4/" title="5.0.4" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                5.0.3
+                5.0.4
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
