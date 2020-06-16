@@ -80,6 +80,16 @@ import javax.xml.stream.XMLStreamException;
                         type = {DataType.STRING},
                         optional = true,
                         defaultValue = "Root element"),
+                @Parameter(name = "enclosing.element.as.event",
+                        description =
+                                "This can either have value true or false. By default it will be false. "
+                                        + "This attribute specifies whether the given enclosing element, it self is "
+                                        + "the event. The user will be able to handle events which doesn't have "
+                                        + "multiple attributes or when the enclosing event doesnt contain any "
+                                        + "children.",
+                        type = {DataType.BOOL},
+                        optional = true,
+                        defaultValue = "False"),
                 @Parameter(name = "fail.on.missing.attribute",
                         description = "This can either have value true or false. By default it will be true. This "
                                 + "attribute allows user to handle unknown attributes. By default if an xpath "
@@ -131,6 +141,7 @@ public class XmlSourceMapper extends SourceMapper {
     private static final String EVENTS_PARENT_ELEMENT = "events";
     private static final String EVENT_ELEMENT = "event";
     private static final String FAIL_ON_UNKNOWN_ATTRIBUTE = "fail.on.missing.attribute";
+    private static final String ENCLOSING_ELEMENT_AS_EVENT = "enclosing.element.as.event";
     //Indicates whether custom mapping is enabled or not.
     private boolean isCustomMappingEnabled = false;
     private StreamDefinition streamDefinition;
@@ -143,6 +154,7 @@ public class XmlSourceMapper extends SourceMapper {
     private Map<String, Attribute.Type> attributeTypeMap = new HashMap<>();
     private Map<String, Integer> attributePositionMap = new HashMap<>();
     private List<AttributeMapping> attributeMappingList;
+    private boolean enclosingElementAsEvent = false;
 
     /**
      * Initialize the mapper and the mapping configurations.
@@ -227,7 +239,8 @@ public class XmlSourceMapper extends SourceMapper {
                             enclosingElementSelectorXPath, e);
                 }
             }
-
+            enclosingElementAsEvent = Boolean.parseBoolean(
+                    optionHolder.validateAndGetStaticValue(ENCLOSING_ELEMENT_AS_EVENT, "false"));
 
         }
     }
@@ -320,11 +333,17 @@ public class XmlSourceMapper extends SourceMapper {
                 }
                 for (Object enclosingNode : enclosingNodeList) {
                     Iterator iterator = ((OMElement) enclosingNode).getChildElements();
-                    while (iterator.hasNext()) {
-                        OMElement eventOMElement = (OMElement) iterator.next();
-                        Event event = buildEvent(eventOMElement);
-                        if (event != null) {
-                            eventList.add(event);
+                    if (!iterator.hasNext()) {
+                        if (enclosingElementAsEvent) {
+                            eventList.add(buildEvent(((OMElement) enclosingNode)));
+                        }
+                    } else {
+                        while (iterator.hasNext()) {
+                            OMElement eventOMElement = (OMElement) iterator.next();
+                            Event event = buildEvent(eventOMElement);
+                            if (event != null) {
+                                eventList.add(event);
+                            }
                         }
                     }
                 }
@@ -404,20 +423,33 @@ public class XmlSourceMapper extends SourceMapper {
             String attributeName = attributeMapping.getName();
             Attribute.Type attributeType = attributeTypeMap.get(attributeName);
             AXIOMXPath axiomXPath = xPathMap.get(attributeName);
+            boolean getRootNode = false;
             if (axiomXPath != null) { //can be null in transport properties scenario
                 try {
                     List selectedNodes = axiomXPath.selectNodes(eventOMElement);
                     if (selectedNodes.size() == 0) {
-                        if (failOnUnknownAttribute) {
-                            log.warn("Xpath: '" + axiomXPath.toString() + " did not yield any results. Hence dropping "
-                                    + "the event : " + eventOMElement.toString());
-                            return null;
+                        if (enclosingElementAsEvent &&
+                                eventOMElement.getLocalName().equalsIgnoreCase(axiomXPath.toString()) &&
+                                eventOMElement.getFirstElement() == null) {
+                            getRootNode = true;
                         } else {
-                            continue;
+                            if (failOnUnknownAttribute) {
+                                log.warn("Xpath: '" + axiomXPath.toString() +
+                                        " did not yield any results. Hence dropping the event : " +
+                                        eventOMElement.toString());
+                                return null;
+                            } else {
+                                continue;
+                            }
                         }
                     }
                     //We will by default consider the first node. We are not logging this to get rid of an if condition.
-                    Object elementObj = selectedNodes.get(0);
+                    Object elementObj;
+                    if (getRootNode) {
+                        elementObj = eventOMElement;
+                    } else {
+                        elementObj = selectedNodes.get(0);
+                    }
                     if (elementObj instanceof OMElement) {
                         OMElement element = (OMElement) elementObj;
                         if (element.getFirstElement() != null) {
