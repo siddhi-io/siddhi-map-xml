@@ -23,12 +23,14 @@ import io.siddhi.annotation.Parameter;
 import io.siddhi.annotation.util.DataType;
 import io.siddhi.core.config.SiddhiAppContext;
 import io.siddhi.core.event.Event;
+import io.siddhi.core.exception.MappingFailedException;
 import io.siddhi.core.exception.SiddhiAppRuntimeException;
 import io.siddhi.core.stream.input.source.AttributeMapping;
 import io.siddhi.core.stream.input.source.InputEventHandler;
 import io.siddhi.core.stream.input.source.SourceMapper;
 import io.siddhi.core.util.AttributeConverter;
 import io.siddhi.core.util.config.ConfigReader;
+import io.siddhi.core.util.error.handler.model.ErroneousEvent;
 import io.siddhi.core.util.transport.OptionHolder;
 import io.siddhi.query.api.definition.Attribute;
 import io.siddhi.query.api.definition.StreamDefinition;
@@ -41,7 +43,7 @@ import org.apache.axiom.om.xpath.AXIOMXPath;
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -259,17 +261,23 @@ public class XmlSourceMapper extends SourceMapper {
      * @param inputEventHandler input handler
      */
     @Override
-    protected void mapAndProcess(Object eventObject, InputEventHandler inputEventHandler) throws InterruptedException {
+    protected void mapAndProcess(Object eventObject, InputEventHandler inputEventHandler)
+            throws MappingFailedException, InterruptedException {
+        List<ErroneousEvent> failedEvents = new ArrayList<>(0);
         Event[] result;
         try {
-            result = convertToEvents(eventObject);
+            result = convertToEvents(eventObject, failedEvents);
             if (result.length > 0) {
                 inputEventHandler.sendEvents(result);
             }
         } catch (Throwable t) { //stringToOM does not throw the exception immediately due to streaming. Hence need this.
             log.error("Exception occurred when converting XML message to Siddhi Event", t);
+            failedEvents.add(new ErroneousEvent(eventObject, t,
+                    "Exception occurred when converting XML message to Siddhi Event"));
         }
-
+        if (!failedEvents.isEmpty()) {
+            throw new MappingFailedException(failedEvents);
+        }
     }
 
     @Override
@@ -283,9 +291,8 @@ public class XmlSourceMapper extends SourceMapper {
      * @param eventObject The input event, given as an XML string
      * @return the constructed {@link Event} object
      */
-    private Event[] convertToEvents(Object eventObject) {
+    private Event[] convertToEvents(Object eventObject, List<ErroneousEvent> failedEvents) {
         List<Event> eventList = new ArrayList<>();
-
         OMElement rootOMElement;
         if (eventObject instanceof String) {
             try {
@@ -293,6 +300,9 @@ public class XmlSourceMapper extends SourceMapper {
             } catch (XMLStreamException | DeferredParsingException e) {
                 log.warn("Error parsing incoming XML event : " + eventObject + ". Reason: " + e.getMessage()
                         + ". Hence dropping message chunk");
+                failedEvents.add(new ErroneousEvent(eventObject, e,
+                        "Error parsing incoming XML event : " + eventObject + ". Reason: " + e.getMessage()
+                                + ". Hence dropping message chunk"));
                 return new Event[0];
             }
         } else if (eventObject instanceof OMElement) {
@@ -300,20 +310,22 @@ public class XmlSourceMapper extends SourceMapper {
         } else if (eventObject instanceof byte[]) {
             String events = null;
             try {
-                events = new String((byte[]) eventObject, "UTF-8");
+                events = new String((byte[]) eventObject, StandardCharsets.UTF_8);
                 rootOMElement = AXIOMUtil.stringToOM(events);
-            } catch (UnsupportedEncodingException e) {
-                log.error("Error is encountered while decoding the byte stream. Please note that only UTF-8 "
-                        + "encoding is supported" + e.getMessage(), e);
-                return new Event[0];
             } catch (XMLStreamException | DeferredParsingException e) {
                 log.warn("Error parsing incoming XML event : " + events + ". Reason: " + e.getMessage() +
                         ". Hence dropping message chunk");
+                failedEvents.add(new ErroneousEvent(eventObject, e,
+                        "Error parsing incoming XML event : " + events + ". Reason: " + e.getMessage() +
+                                ". Hence dropping message chunk"));
                 return new Event[0];
             }
         } else {
             log.warn("Event object is invalid. Expected String/OMElement or Byte Array, but found "
                     + eventObject.getClass().getCanonicalName());
+            failedEvents.add(new ErroneousEvent(eventObject,
+                    "Event object is invalid. Expected String/OMElement or Byte Array, but found "
+                            + eventObject.getClass().getCanonicalName()));
             return new Event[0];
         }
 
@@ -323,11 +335,17 @@ public class XmlSourceMapper extends SourceMapper {
                 try {
                     enclosingNodeList = enclosingElementSelectorPath.selectNodes(rootOMElement);
                     if (enclosingNodeList.size() == 0) {
-                        log.warn("Provided enclosing element did not match any xml node. Hence dropping the event :" +
-                                rootOMElement.toString());
+                        log.warn("Provided enclosing element did not match any xml node. " +
+                                "Hence dropping the event :" + rootOMElement.toString());
+                        failedEvents.add(new ErroneousEvent(eventObject,
+                                "Provided enclosing element did not match any xml node. " +
+                                        "Hence dropping the event :" + rootOMElement.toString()));
                         return new Event[0];
                     }
                 } catch (JaxenException e) {
+                    failedEvents.add(new ErroneousEvent(eventObject, e,
+                            "Error occurred when selecting nodes from XPath: " +
+                                    enclosingElementSelectorPath.toString()));
                     throw new SiddhiAppRuntimeException("Error occurred when selecting nodes from XPath: "
                             + enclosingElementSelectorPath.toString(), e);
                 }
@@ -335,23 +353,31 @@ public class XmlSourceMapper extends SourceMapper {
                     Iterator iterator = ((OMElement) enclosingNode).getChildElements();
                     if (!iterator.hasNext()) {
                         if (enclosingElementAsEvent) {
-                            eventList.add(buildEvent(((OMElement) enclosingNode)));
+                            try {
+                                Event event = buildEvent(((OMElement) enclosingNode));
+                                eventList.add(event);
+                            } catch (MappingFailedException e) {
+                                failedEvents.add(new ErroneousEvent((OMElement) enclosingNode, e.getMessage()));
+                            }
                         }
                     } else {
                         while (iterator.hasNext()) {
                             OMElement eventOMElement = (OMElement) iterator.next();
-                            Event event = buildEvent(eventOMElement);
-                            if (event != null) {
+                            try {
+                                Event event = buildEvent(eventOMElement);
                                 eventList.add(event);
+                            } catch (MappingFailedException e) {
+                                failedEvents.add(new ErroneousEvent(eventOMElement, e.getMessage()));
                             }
                         }
                     }
                 }
-
             } else {    //input XML string has only one event in it.
-                Event event = buildEvent(rootOMElement);
-                if (event != null) {
+                try {
+                    Event event = buildEvent(rootOMElement);
                     eventList.add(event);
+                } catch (MappingFailedException e) {
+                    failedEvents.add(new ErroneousEvent(rootOMElement, e.getMessage()));
                 }
             }
         } else {    //default mapping case
@@ -374,11 +400,15 @@ public class XmlSourceMapper extends SourceMapper {
                             } catch (SiddhiAppRuntimeException | NumberFormatException e) {
                                 log.warn("Error occurred when extracting attribute value. Cause: " + e.getMessage() +
                                         ". Hence dropping the event: " + eventOMElement.toString());
+                                failedEvents.add(new ErroneousEvent(eventObject, e,
+                                        "Error occurred when extracting attribute value. Cause: " +
+                                                e.getMessage() + ". Hence dropping the event: " +
+                                                eventOMElement.toString()));
                                 isMalformedEvent = true;
                                 break;
                             }
                         } else {
-                            log.warn("Attribute : " + attributeName + "was not found in given stream definition. " +
+                            log.warn("Attribute : " + attributeName + " was not found in given stream definition. " +
                                     "Hence ignoring this attribute");
                         }
                     }
@@ -387,6 +417,9 @@ public class XmlSourceMapper extends SourceMapper {
                             log.warn("No attribute with name: " + streamDefinition.getAttributeNameArray()[i] +
                                     " found in input event: " + eventOMElement.toString() + ". Hence dropping the" +
                                     " event.");
+                            failedEvents.add(new ErroneousEvent(eventObject, "No attribute with name: " +
+                                    streamDefinition.getAttributeNameArray()[i] + " found in input event: " +
+                                    eventOMElement.toString() + ". Hence dropping the event."));
                             isMalformedEvent = true;
                         }
                     }
@@ -396,9 +429,13 @@ public class XmlSourceMapper extends SourceMapper {
                 }
             } else {
                 log.warn("Incoming XML message should adhere to pre-defined format" +
-                        "when using default mapping. Root element name should be " + EVENTS_PARENT_ELEMENT + ". But " +
+                        " when using default mapping. Root element name should be " + EVENTS_PARENT_ELEMENT + ". But " +
                         "found " + rootOMElement.getLocalName() + ". Hence dropping XML message : " +
                         rootOMElement.toString());
+                failedEvents.add(new ErroneousEvent(eventObject, "Incoming XML message should adhere to " +
+                        "pre-defined format when using default mapping. Root element name should be " +
+                        EVENTS_PARENT_ELEMENT + ". But found " + rootOMElement.getLocalName() +
+                        ". Hence dropping XML message : " + rootOMElement.toString()));
             }
         }
         return eventList.toArray(new Event[0]);
@@ -416,7 +453,7 @@ public class XmlSourceMapper extends SourceMapper {
         }
     }
 
-    private Event buildEvent(OMElement eventOMElement) {
+    private Event buildEvent(OMElement eventOMElement) throws MappingFailedException {
         Event event = new Event(streamDefinition.getAttributeList().size());
         Object[] data = event.getData();
         for (AttributeMapping attributeMapping : attributeMappingList) {
@@ -434,10 +471,11 @@ public class XmlSourceMapper extends SourceMapper {
                             getRootNode = true;
                         } else {
                             if (failOnUnknownAttribute) {
-                                log.warn("Xpath: '" + axiomXPath.toString() +
+                                String errMsg = "Xpath: '" + axiomXPath.toString() +
                                         " did not yield any results. Hence dropping the event : " +
-                                        eventOMElement.toString());
-                                return null;
+                                        eventOMElement.toString();
+                                log.warn(errMsg);
+                                throw new MappingFailedException(errMsg);
                             } else {
                                 continue;
                             }
@@ -456,10 +494,11 @@ public class XmlSourceMapper extends SourceMapper {
                             if (attributeType.equals(Attribute.Type.STRING)) {
                                 data[attributeMapping.getPosition()] = element.toString();
                             } else {
-                                log.warn("XPath: " + axiomXPath.toString() + " did not return a leaf element and "
-                                        + "stream definition is not expecting a String attribute. Hence "
-                                        + "dropping the event: " + eventOMElement.toString());
-                                return null;
+                                String errMsg = "XPath: " + axiomXPath.toString() + " did not return a leaf element " +
+                                        "and stream definition is not expecting a String attribute. Hence "
+                                        + "dropping the event: " + eventOMElement.toString();
+                                log.warn(errMsg);
+                                throw new MappingFailedException(errMsg);
                             }
                         } else {
                             String attributeValue = element.getText();
@@ -468,9 +507,10 @@ public class XmlSourceMapper extends SourceMapper {
                                         getPropertyValue(attributeValue, attributeType);
                             } catch (SiddhiAppRuntimeException | NumberFormatException e) {
                                 if (failOnUnknownAttribute) {
-                                    log.warn("Error occurred when extracting attribute value. Cause: " + e.getMessage()
-                                            + ". Hence dropping the event: " + eventOMElement.toString());
-                                    return null;
+                                    String errMsg = "Error occurred when extracting attribute value. Cause: " +
+                                            e.getMessage() + ". Hence dropping the event: " + eventOMElement.toString();
+                                    log.warn(errMsg);
+                                    throw new MappingFailedException(errMsg);
                                 }
                             }
                         }
@@ -480,15 +520,17 @@ public class XmlSourceMapper extends SourceMapper {
                             data[attributeMapping.getPosition()] = attributeConverter.
                                     getPropertyValue(omAttribute.getAttributeValue(), attributeType);
                         } catch (SiddhiAppRuntimeException | NumberFormatException e) {
-                            log.warn("Error occurred when extracting attribute value. Cause: " + e.getMessage() +
-                                    ". Hence dropping the event: " + eventOMElement.toString());
-                            return null;
+                            String errMsg = "Error occurred when extracting attribute value. Cause: " + e.getMessage() +
+                                    ". Hence dropping the event: " + eventOMElement.toString();
+                            log.warn(errMsg);
+                            throw new MappingFailedException(errMsg);
                         }
                     }
                 } catch (JaxenException e) {
-                    log.warn("Error occurred when selecting attribute: " + attributeName
-                            + " in the input event, using the given XPath: " + xPathMap.get(attributeName).toString());
-                    return null;
+                    String errMsg = "Error occurred when selecting attribute: " + attributeName
+                            + " in the input event, using the given XPath: " + xPathMap.get(attributeName).toString();
+                    log.warn(errMsg);
+                    throw new MappingFailedException(errMsg);
                 }
             }
         }
