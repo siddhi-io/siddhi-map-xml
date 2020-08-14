@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root>
+	<bounds minlat="53.4281" minlon="-2.4142" maxlat="54.0097" maxlon="-0.9762"/>
+	<child id="413229" timestamp="2014-09-10T14:12:48Z"/>
+	<child id="414427" timestamp="2018-01-24T23:16:10Z"/>
+	<child id="673959" timestamp="2019-10-20T12:07:13Z">
+		<extra id="1234" timestamp="2014-09-11T10:36:37Z"/>
+		<detail key="company" value="wso2"/>
+		<extra id="0987" timestamp="2014-09-11T10:36:37Z"/>
+		<detail key="country" value="Sri Lanka"/>
+	</child>
+	<child id="1649133314" timestamp="2019-03-11T17:16:47Z">
+		<extra id="5678" timestamp="2014-09-11T10:36:37Z"/>
+		<detail key="company" value="ibm"/>
+		<detail key="country" value="USA"/>
+		<detail key="employees" value="500"/>
+	</child>
+	<way id="3698064" timestamp="2017-12-30T23:25:01Z" >
+		<detail key="company" value="ibm"/>
+		<detail key="country" value="USA"/>
+		<subDetail ref="2143797720"/>
+		<subDetail ref="2143797722"/>
+	</way>
+	<node id="1234567890" timestamp="2014-09-11T10:36:37Z" />
+	<way id="204702407" version="3" timestamp="2017-12-31T00:30:25Z">
+		<detail key="company" value="ibm"/>
+		<detail key="country" value="USA"/>
+		<subDetail ref="2143797720"/>
+		<subDetail ref="2143797722"/>
+	</way>
+</osm>

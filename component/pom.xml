@@ -64,6 +64,15 @@
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
         </dependency>
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.siddhi.extension.io.file</groupId>
+            <artifactId>siddhi-io-file</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <profiles>
