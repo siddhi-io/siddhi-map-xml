@@ -83,6 +83,17 @@
                 <classifier>runtime</classifier>
                 <version>${jacoco.version}</version>
             </dependency>
+            <dependency>
+                <groupId>stax</groupId>
+                <artifactId>stax</artifactId>
+                <version>${stax.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.siddhi.extension.io.file</groupId>
+                <artifactId>siddhi-io-file</artifactId>
+                <version>${siddhi.io.file.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -123,6 +134,8 @@
         <mime4j.version>0.7.2</mime4j.version>
         <xml.mapper.bundle.version>4.0.0.M10</xml.mapper.bundle.version>
         <jacoco.version>0.7.9</jacoco.version>
+        <siddhi.io.file.version>2.0.10</siddhi.io.file.version>
+        <stax.version>1.2.0</stax.version>
     </properties>
 
     <scm>

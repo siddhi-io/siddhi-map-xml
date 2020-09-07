@@ -1,5 +1,5 @@
 /*
- * Copyright (c)  2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2017, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -1451,6 +1451,142 @@ public class XmlSourceMapperTestCase {
                 "    <price dt:dt=\"number\">75.6</price>" +
                 "  </stock>" +
                 "</portfolio>");
+        //assert event count
+        AssertJUnit.assertEquals("Number of events", 2, count.get());
+        executionPlanRuntime.shutdown();
+        siddhiManager.shutdown();
+    }
+
+    @Test
+    public void testXmlInputMappingForMultipleEventsWithNestedXMLStructure() throws Exception {
+        log.info("Test for multiple event generation with nested xml structure.");
+        String streams = "" +
+                "@App:name('TestSiddhiApp')" +
+                "@source(type='inMemory', " +
+                "topic='stock', " +
+                "@map(type='xml'," +
+                "enclosing.element=\"/portfolio\"," +
+                "fail.on.missing.attribute=\"false\"," +
+                "extract.leaf.node.data=\"true\"," +
+                "@attributes(volume = \"/stock/volume\", price = \"/stock/price\", symbol = \"/stock/symbol\", " +
+                "alternateSymbolValue = \"/stock/leafNode/alternateSymbolValue\", " +
+                "alternateSymbolValue2 = \"/stock/leafNode/alternateSymbolValue2\")))\n" +
+                "define stream FooStream (volume int, price float, symbol string, alternateSymbolValue string, " +
+                "alternateSymbolValue2 string); " +
+                "define stream BarStream (volume int, price float, symbol string, alternateSymbolValue string, " +
+                "alternateSymbolValue2 string); ";
+        String query = "" +
+                "from FooStream " +
+                "select * " +
+                "insert into BarStream; ";
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime executionPlanRuntime = siddhiManager.createSiddhiAppRuntime(streams + query);
+
+        executionPlanRuntime.addCallback("BarStream", new StreamCallback() {
+            @Override
+            public void receive(Event[] events) {
+                EventPrinter.print(events);
+                for (Event event : events) {
+                    switch (count.incrementAndGet()) {
+                        case 1:
+                            org.junit.Assert.assertEquals(55.6f, event.getData(1));
+                            org.junit.Assert.assertEquals("WSO22", event.getData(3));
+                            break;
+                        case 2:
+                            org.junit.Assert.assertEquals(55.6f, event.getData(1));
+                            org.junit.Assert.assertEquals("WSO44", event.getData(3));
+                            break;
+                        case 3:
+                            org.junit.Assert.assertEquals(99.9f, event.getData(1));
+                            org.junit.Assert.assertNull(event.getData(3));
+                            break;
+                        default:
+                            org.junit.Assert.fail();
+                    }
+                }
+            }
+        });
+        executionPlanRuntime.start();
+        InMemoryBroker.publish("stock", "<?xml version=\"1.0\"?>" +
+                "<portfolio>" +
+                "  <stock>" +
+                "    <volume>100</volume>" +
+                "    <symbol>WSO2</symbol>" +
+                "    <price>55.6</price>" +
+                "    <leafNode>" +
+                "         <alternateSymbolValue>WSO22</alternateSymbolValue>" +
+                "         <alternateSymbolValue2>WSO33</alternateSymbolValue2>" +
+                "    </leafNode>" +
+                "    <leafNode>" +
+                "         <alternateSymbolValue>WSO44</alternateSymbolValue>" +
+                "         <alternateSymbolValue2>WSO55</alternateSymbolValue2>" +
+                "    </leafNode>" +
+                "  </stock>" +
+                "  <stock exchange=\"nyse\">" +
+                "    <volume>200</volume>" +
+                "    <symbol>IBM</symbol>" +
+                "    <price>99.9</price>" +
+                "  </stock>" +
+                "</portfolio>");
+        //assert event count
+        AssertJUnit.assertEquals("Number of events", 3, count.get());
+        executionPlanRuntime.shutdown();
+        siddhiManager.shutdown();
+    }
+
+    @Test
+    public void testXmlInputMappingCustomOnNoChildrenInXpath2() throws Exception {
+        log.info("Verify xml mapping when multiple enclosing tags are present with no child elements 2");
+
+        String streams = "" +
+                "@App:name('TestSiddhiApp')" +
+                "@source(type='inMemory', topic='stock', @map(type='xml', " +
+                "enclosing.element=\"/events/wrapper/event\", enclosing.element.as.event=\"true\", " +
+                "@attributes(volume = \"volume\", price = \"price\", symbol = \"symbol\"))) " +
+                "define stream FooStream (volume int, price float, symbol string); " +
+                "define stream BarStream (volume int, price float, symbol string); ";
+
+        String query = "" +
+                "from FooStream " +
+                "select * " +
+                "insert into BarStream; ";
+
+        SiddhiManager siddhiManager = new SiddhiManager();
+        SiddhiAppRuntime executionPlanRuntime = siddhiManager.createSiddhiAppRuntime(streams + query);
+
+        executionPlanRuntime.addCallback("BarStream", new StreamCallback() {
+
+            @Override
+            public void receive(Event[] events) {
+                EventPrinter.print(events);
+                for (Event event : events) {
+                    switch (count.incrementAndGet()) {
+                        case 1:
+                            org.junit.Assert.assertEquals("WSO2", event.getData(2));
+                            break;
+                        case 2:
+                            org.junit.Assert.assertEquals("IBM", event.getData(2));
+                            break;
+                        default:
+                            org.junit.Assert.fail();
+                    }
+                }
+            }
+        });
+        executionPlanRuntime.start();
+        InMemoryBroker.publish("stock", ("<?xml version=\"1.0\"?>" +
+                "<events><wrapper>\n"
+                + "    <event>\n"
+                + "        <symbol>WSO2</symbol>\n"
+                + "        <price>55.6</price>\n"
+                + "        <volume>100</volume>\n"
+                + "    </event>\n"
+                + "    <event>\n"
+                + "        <symbol>IBM</symbol>\n"
+                + "        <price>66.6</price>\n"
+                + "        <volume>200</volume>\n"
+                + "    </event>\n"
+                + "</wrapper></events>\n").getBytes(StandardCharsets.UTF_8));
         //assert event count
         AssertJUnit.assertEquals("Number of events", 2, count.get());
         executionPlanRuntime.shutdown();
