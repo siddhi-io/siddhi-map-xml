@@ -156,6 +156,12 @@ public class XMLSinkMapper extends SinkMapper {
                 //We only need to check the parsability of xml we are generating. Hence setting validating to false.
                 factory.setNamespaceAware(true);
                 try {
+                    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                    factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                    factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                    factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                    factory.setXIncludeAware(false);
+                    factory.setExpandEntityReferences(false);
                     builder = factory.newDocumentBuilder();
                 } catch (ParserConfigurationException e) {
                     throw new SiddhiAppCreationException("Error occurred when initializing XML validator", e);
