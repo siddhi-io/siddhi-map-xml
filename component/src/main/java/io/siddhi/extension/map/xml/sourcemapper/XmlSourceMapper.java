@@ -40,7 +40,8 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
 import org.apache.axiom.om.xpath.AXIOMXPath;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 
 import java.nio.charset.StandardCharsets;
@@ -264,7 +265,7 @@ import javax.xml.stream.XMLStreamException;
 )
 public class XmlSourceMapper extends SourceMapper {
 
-    private static final Logger log = Logger.getLogger(XmlSourceMapper.class);
+    private static final Logger log = LogManager.getLogger(XmlSourceMapper.class);
     private static final String PARENT_SELECTOR_XPATH = "enclosing.element";
     private static final String NAMESPACES = "namespaces";
     private static final String EVENTS_PARENT_ELEMENT = "events";

@@ -26,7 +26,9 @@ import io.siddhi.core.stream.output.StreamCallback;
 import io.siddhi.core.util.EventPrinter;
 import io.siddhi.core.util.SiddhiTestHelper;
 import io.siddhi.core.util.transport.InMemoryBroker;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
@@ -36,7 +38,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class XmlSourceMapperTestCase {
-    private static Logger log = Logger.getLogger(XmlSourceMapperTestCase.class);
+    private static final Logger log = (Logger) LogManager.getLogger(XmlSourceMapperTestCase.class);
     private AtomicInteger count = new AtomicInteger();
 
     @BeforeMethod
@@ -963,9 +965,11 @@ public class XmlSourceMapperTestCase {
     @Test
     public void testXmlInputMappingCustom12() throws Exception {
         log.info("Check incoming XML event");
-        log = Logger.getLogger(XmlSourceMapper.class);
-        UnitTestAppender appender = new UnitTestAppender();
-        log.addAppender(appender);
+        UnitTestAppender appender = new UnitTestAppender("UnitTestAppender", null);
+        final Logger logger = (Logger) LogManager.getRootLogger();
+        logger.setLevel(Level.ALL);
+        logger.addAppender(appender);
+        appender.start();
         String streams = "" +
                 "@App:name('TestSiddhiApp')" +
                 "@source(type='inMemory', topic='stock', @map(type='xml', namespaces = " +
@@ -986,17 +990,21 @@ public class XmlSourceMapperTestCase {
         executionPlanRuntime.start();
         InMemoryBroker.publish("stock", "");
         //assert event count
-        AssertJUnit.assertTrue(appender.getMessages().contains("Hence dropping message chunk"));
+        AssertJUnit.assertTrue(((UnitTestAppender) logger.getAppenders().
+                get("UnitTestAppender")).getMessages().contains("Hence dropping message chunk"));
         executionPlanRuntime.shutdown();
         siddhiManager.shutdown();
+        logger.removeAppender(appender);
     }
 
     @Test
     public void testXmlInputMappingCustom13() throws Exception {
         log.info("Test case for name space format.");
-        log = Logger.getLogger(XmlSourceMapper.class);
-        UnitTestAppender appender = new UnitTestAppender();
-        log.addAppender(appender);
+        UnitTestAppender appender = new UnitTestAppender("UnitTestAppender", null);
+        final Logger logger = (Logger) LogManager.getRootLogger();
+        logger.setLevel(Level.ALL);
+        logger.addAppender(appender);
+        appender.start();
         String streams = "" +
                 "@App:name('TestSiddhiApp')" +
                 "@source(type='inMemory', topic='stock', @map(type='xml', namespaces = " +
@@ -1040,18 +1048,22 @@ public class XmlSourceMapperTestCase {
                 "  </stock>" +
                 "</portfolio>");
         //assert event count
-        AssertJUnit.assertTrue(appender.getMessages().contains("Each namespace has to have format"));
+        AssertJUnit.assertTrue(((UnitTestAppender) logger.getAppenders().
+                get("UnitTestAppender")).getMessages().contains("Each namespace has to have format"));
         executionPlanRuntime.shutdown();
         siddhiManager.shutdown();
+        logger.removeAppender(appender);
     }
 
     @Test
     public void testXmlInputMappingCustom15() throws Exception {
         log.info("Test case for If elementObj instanceof OMElement and element.getFirstElement() "
                 + "!= null then check attribute's type not String .");
-        log = Logger.getLogger(XmlSourceMapper.class);
-        UnitTestAppender appender = new UnitTestAppender();
-        log.addAppender(appender);
+        UnitTestAppender appender = new UnitTestAppender("UnitTestAppender", null);
+        final Logger logger = (Logger) LogManager.getRootLogger();
+        logger.setLevel(Level.ALL);
+        logger.addAppender(appender);
+        appender.start();
         String streams = "" +
                 "@App:name('TestSiddhiApp')" +
                 "@source(type='inMemory', topic='stock', @map(type='xml', namespaces = " +
@@ -1081,17 +1093,21 @@ public class XmlSourceMapperTestCase {
                 "</portfolio>");
         //assert event count
         executionPlanRuntime.shutdown();
-        AssertJUnit.assertTrue(appender.getMessages().contains("a leaf element and stream definition is"
+        AssertJUnit.assertTrue(((UnitTestAppender) logger.getAppenders().
+                get("UnitTestAppender")).getMessages().contains("a leaf element and stream definition is"
                 + " not expecting a String attribute"));
         siddhiManager.shutdown();
+        logger.removeAppender(appender);
     }
 
     @Test
     public void testXmlInputMappingCustomForEvents() throws Exception {
         log.info("Test case for if elementObj instanceof OMAttribute but some problem occurred during convert data.");
-        log = Logger.getLogger(XmlSourceMapper.class);
-        UnitTestAppender appender = new UnitTestAppender();
-        log.addAppender(appender);
+        UnitTestAppender appender = new UnitTestAppender("UnitTestAppender", null);
+        final Logger logger = (Logger) LogManager.getRootLogger();
+        logger.setLevel(Level.ALL);
+        logger.addAppender(appender);
+        appender.start();
         String streams = "" +
                 "@App:name('TestSiddhiApp')" +
                 "@source(type='inMemory', topic='stock', @map(type='xml', namespaces = " +
@@ -1120,9 +1136,11 @@ public class XmlSourceMapperTestCase {
                 "  </stock>" +
                 "</portfolio>");
         //assert event count
-        AssertJUnit.assertTrue(appender.getMessages().contains("Error occurred when extracting attribute value"));
+        AssertJUnit.assertTrue(((UnitTestAppender) logger.getAppenders().
+                get("UnitTestAppender")).getMessages().contains("Error occurred when extracting attribute value"));
         executionPlanRuntime.shutdown();
         siddhiManager.shutdown();
+        logger.removeAppender(appender);
     }
 
     @Test(expectedExceptions = SiddhiAppCreationException.class)
