@@ -31,7 +31,8 @@ import io.siddhi.query.api.execution.query.Query;
 import io.siddhi.query.api.execution.query.input.stream.InputStream;
 import io.siddhi.query.api.execution.query.selection.Selector;
 import io.siddhi.query.api.expression.Variable;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -42,7 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class XMLSinkMapperWithSiddhiQueryAPITestCase {
 
-    private static final Logger log = Logger.getLogger(XMLSinkMapperWithSiddhiQueryAPITestCase.class);
+    private static final Logger log = LogManager.getLogger(XMLSinkMapperWithSiddhiQueryAPITestCase.class);
     private AtomicInteger wso2Count = new AtomicInteger(0);
     private AtomicInteger ibmCount = new AtomicInteger(0);
 

@@ -25,7 +25,8 @@ import io.siddhi.core.stream.input.InputHandler;
 import io.siddhi.core.stream.output.sink.InMemorySink;
 import io.siddhi.core.util.SiddhiTestHelper;
 import io.siddhi.core.util.transport.InMemoryBroker;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -35,7 +36,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class XMLSinkMapperWithSiddhiQLTestCase {
-    private static final Logger log = Logger.getLogger(XMLSinkMapperWithSiddhiQLTestCase.class);
+    private static final Logger log = LogManager.getLogger(XMLSinkMapperWithSiddhiQLTestCase.class);
     private AtomicInteger wso2Count = new AtomicInteger(0);
     private AtomicInteger ibmCount = new AtomicInteger(0);
     private final int waitTime = 2000;

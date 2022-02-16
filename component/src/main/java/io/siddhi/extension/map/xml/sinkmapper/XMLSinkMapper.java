@@ -31,7 +31,8 @@ import io.siddhi.core.util.transport.Option;
 import io.siddhi.core.util.transport.OptionHolder;
 import io.siddhi.core.util.transport.TemplateBuilder;
 import io.siddhi.query.api.definition.StreamDefinition;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
@@ -103,7 +104,7 @@ import javax.xml.parsers.ParserConfigurationException;
         }
 )
 public class XMLSinkMapper extends SinkMapper {
-    private static final Logger log = Logger.getLogger(XMLSinkMapper.class);
+    private static final Logger log = LogManager.getLogger(XMLSinkMapper.class);
 
     private static final String EVENTS_PARENT_OPENING_TAG = "<events>";
     private static final String EVENTS_PARENT_CLOSING_TAG = "</events>";
